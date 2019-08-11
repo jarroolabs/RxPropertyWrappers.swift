@@ -7,28 +7,62 @@
 //
 
 import XCTest
-@testable import RxPropertyWrappers
+import RxSwift
+import RxPropertyWrappers
 
 class RxPropertyWrappersTests: XCTestCase {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    func testWrappers() {
+        // TODO
     }
+}
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+struct ObjectWithWrappers {
+    private let disposeBag = DisposeBag()
+    
+    @BehaviorSubjectWrapping(value: "Initial String Value")
+    var behaviorSubject: Observable
+    
+    @PublishSubjectWrapping
+    var publishSubject: Observable<String>
+    
+    @BehaviorRelayWrapping(value: "Initial String Value")
+    var behaviorRelay: Observable<String>
+    
+    @PublishRelayWrapping
+    var publishRelay: Observable<String>
+    
+    func subjects() {
+        behaviorSubject
+            .subscribe(onNext: { value in
+                print(value)
+            })
+            .disposed(by: disposeBag)
+        
+        publishSubject
+            .subscribe(onNext: { value in
+                print(value)
+            })
+            .disposed(by: disposeBag)
+
+        _behaviorSubject.onNext("Test")
+        _publishSubject.onNext("Test")
     }
+    
+    func relays() {
+        behaviorRelay
+            .subscribe(onNext: { value in
+                print(value)
+            })
+            .disposed(by: disposeBag)
+        
+        publishRelay
+            .subscribe(onNext: { value in
+                print(value)
+            })
+            .disposed(by: disposeBag)
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        _behaviorRelay.accept("Test")
+        _publishRelay.accept("Test")
     }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
